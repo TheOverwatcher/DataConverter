@@ -20,8 +20,6 @@ def parse_config(configFile):
             # Loop through pieces of the section
             for (key, val) in parser.items(section):
                 # Add the KEY : value pair
-                if(key == 'columns' or key == 'structure'):
-                    print(key)
                 config_data[section].update({key.upper(): val})
 
     except KeyError as err:

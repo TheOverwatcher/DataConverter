@@ -7,11 +7,15 @@ import logging
 class CSVConverter():
     def __init__(self, config_data):
         self.app_data = config_data['APP_DATA']
+        self.app_data.__len__
 
         # CSV configuration to read
         self.csv_data = config_data['CSV_DATA']
         self.filename = self.csv_data['FILENAME']
-        self.columns = self.csv_data['COLUMNS']
+        self.columns = []
+        for col in self.csv_data:
+            if col.startswith("COLUMN"):
+                self.columns.append(self.csv_data[col.upper()])
 
         # Json Configuration to write
         self.json_data = config_data['JSON_DATA']
@@ -62,7 +66,10 @@ class CSVConverter():
 
         record = {}
 
+        for col in self.columns:
+            record[col] = row[col]
+
         # for column in self.columns:
-        self.log("INFO", "record")
+        self.log("INFO", record)
 
         return record
