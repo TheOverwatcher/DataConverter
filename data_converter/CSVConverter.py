@@ -22,14 +22,14 @@ class CSVConverter():
         self.json_structure = {}
         for jobject in self.json_data:
             parent = self.json_data[jobject]
-            # print(parent)
-            # print(jobject)
-            if parent is None:
-                if self.json_data[jobject] is None:
-                    self.recursive_find_parent()
-                self.json_structure[jobject] = []
+            print(parent)
+            print(jobject)
+            if parent == 'None':
+                if parent not in self.json_structure:
+                    self.json_structure[jobject.lower()] = []
             else:
-                self.json_structure[jobject].append(parent)
+                self.find_forefathers(jobject, parent)
+                # self.json_structure[jobject].append(parent)
 
             print(self.json_structure)
 
@@ -37,6 +37,24 @@ class CSVConverter():
         self.logger_name = self.app_data['APP_NAME']
         self.logger = logging.getLogger(self.logger_name)
         assert self.logger, "Failed to establish our logger instance!"
+
+    # Recursive function add forefathers to an array before indexing
+    def find_forefathers(self, child, parent):
+        print(parent)
+        print(child)
+        # We found the most parent object
+        if parent == 'None':
+            return
+        else:
+            # nextParent = self.json_data[parent.upper()]
+            self.find_forefathers(parent, self.json_data[parent.upper()])
+
+        if parent not in self.json_structure:
+            self.json_structure[parent] = []
+        else:
+            self.json_structure[parent].append(child)
+
+        return
 
     def record_structure(self):
         return copy.deepcopy(self.record_structure)
