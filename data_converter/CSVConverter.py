@@ -19,7 +19,19 @@ class CSVConverter():
 
         # Json Configuration to write
         self.json_data = config_data['JSON_DATA']
-        self.structure = self.json_data['STRUCTURE']
+        self.json_structure = {}
+        for jobject in self.json_data:
+            parent = self.json_data[jobject]
+            # print(parent)
+            # print(jobject)
+            if parent is None:
+                if self.json_data[jobject] is None:
+                    self.recursive_find_parent()
+                self.json_structure[jobject] = []
+            else:
+                self.json_structure[jobject].append(parent)
+
+            print(self.json_structure)
 
         # Setup logging
         self.logger_name = self.app_data['APP_NAME']
