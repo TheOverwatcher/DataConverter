@@ -80,4 +80,4 @@ if __name__ == "__main__":
 
     if filename is not None:
         csvCon = CSVConverter(config_data)
-        csvCon.convertData()
+        csvCon.convert_data()
