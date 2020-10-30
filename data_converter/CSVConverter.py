@@ -79,17 +79,26 @@ class CSVConverter():
             with open(self.filename) as csvfile:
                 all_data = csv.DictReader(csvfile, delimiter=',')
 
-                json_array = []
+                json_array = None
                 for row in all_data:
                     record = self.build_record(row)
 
                     formatted_record = self.format_record(record)
 
-                    json_array.append(formatted_record)
+                    # print(json_array)
+                    if json_array is not None:
+                        combine = json_array[0]
+                        for key in combine:
+                            # print(key)
+                            combine[key].append(formatted_record[key][0])
+                            # print(formatted_record[key][0])
+                    else:
+                        json_array = []
+                        json_array.append(formatted_record)
 
                 final_json = json.dumps(json_array)
-                print("This is it boys and girls")
-                print(final_json)
+                # print("This is it boys and girls")
+                # print(final_json)
 
         except IOError as err:
             self.log("INFO", "Failure opening file: " + self.filename)
