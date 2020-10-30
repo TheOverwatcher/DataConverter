@@ -96,7 +96,7 @@ class CSVConverter():
                         json_array = []
                         json_array.append(formatted_record)
 
-                final_json = json.dumps(json_array)
+                final_json = json.dumps(json_array[0])
                 # print("This is it boys and girls")
                 # print(final_json)
                 f = open(self.filename[:-4] + '.json', 'w')
