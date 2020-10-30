@@ -99,6 +99,8 @@ class CSVConverter():
                 final_json = json.dumps(json_array)
                 # print("This is it boys and girls")
                 # print(final_json)
+                f = open(self.filename[:-4] + '.json', 'w')
+                f.write(final_json)
 
         except IOError as err:
             self.log("INFO", "Failure opening file: " + self.filename)
