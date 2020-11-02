@@ -24,8 +24,6 @@ class CSVConverter():
             parent = self.json_data[jobject]
             self.find_forefathers(jobject, parent)
 
-        print(self.json_structure)
-
         # Setup logging
         self.logger_name = self.app_data['APP_NAME']
         self.logger = logging.getLogger(self.logger_name)
@@ -74,7 +72,13 @@ class CSVConverter():
     def convert_data(self):
         """ Method containing the full process of conversion.
 
+            First we read the file in the same directory. For every row in the
+            CSV we make a record then format the record in the structure of the
+            JSON. Then each formatted record is appended to an array and
+            combined with like JSON objects to build the objects properly.
+            Lastly we write the JSON to a file named after the CSV file.
         """
+        self.log("Attempting to convert " + self.filename + " to JSON.")
         try:
             with open(self.filename) as csvfile:
                 all_data = csv.DictReader(csvfile, delimiter=',')
@@ -85,51 +89,45 @@ class CSVConverter():
 
                     formatted_record = self.format_record(record)
 
-                    # print(json_array)
                     if json_array is not None:
                         combine = json_array[0]
                         for key in combine:
-                            # print(key)
                             combine[key].append(formatted_record[key][0])
-                            # print(formatted_record[key][0])
                     else:
                         json_array = []
                         json_array.append(formatted_record)
 
                 final_json = json.dumps(json_array[0])
-                # print("This is it boys and girls")
-                # print(final_json)
-                f = open(self.filename[:-4] + '.json', 'w')
+                json_filename = self.filename[:-4] + '.json'
+                f = open(json_filename, 'w')
                 f.write(final_json)
 
         except IOError as err:
-            self.log("INFO", "Failure opening file: " + self.filename)
+            self.log("ERROR", "Failure opening file: " + self.filename)
+
+        self.log("Conversion complete. See " + json_filename + " for output.")
 
     def format_record(self, record):
-        # Loop through the record and place values of keys that exist
-        # within the json_structure
-        # print("After formatting:")
-        # print(self.json_structure)
-        print(record)
+        """ Format the record from the CSV into the structure of the JSON.
+
+            Match the JSON objects to the CSV columns and input the data from
+            the record into a JSON formatted record.
+        """
 
         new_dict = {}
         for key in self.json_structure:
-            # print("Processing key: " + key)
             if self.json_structure[key] is not None:
-                # print("Recursive return: ")
                 ret = self.recursive_search(self.json_structure[key], record)
                 new_dict[key] = ret
             else:
                 print("passing")
-                # Check if an item in the columns is this key
-                # Since it has no value
                 pass
 
-        # print("After formatting: ")
-        # print(new_dict)
         return new_dict
 
     def build_record(self, row):
+        """ Build a record from a row in the CSV data.
+        """
         assert row, "Missing parameter!"
 
         record = {}
@@ -137,46 +135,28 @@ class CSVConverter():
         for col in self.columns:
             record[col] = row[col]
 
-        # for column in self.columns:
-        # self.log("INFO", record)
-
         return record
 
     def recursive_search(self, structure, record):
-        # print(structure)
+        """ Method to search through the modified structure to add indexes in
+            case of a KeyError.
+
+            Recursive function meant to prevent KeyErrors when adding record
+            information to an dictionary when the parent records in the JSON
+            have yet to be added. If the parent wasn't found, add it and all
+            ancestry based on the JSON structure provided in the configuration.
+        """
 
         if not type(structure) == list:
             return
         else:
-            # print("Before: ")
-            # print(structure)
             new_dict = {}
             for obj in structure:
-                # print(obj)
                 self.recursive_search(obj, record)
-                # print(structure.index(obj))
-                # print(structure[structure.index(obj)])
-                # structure[structure.index(obj)] = \
-                # print(self.replace_with_column_data(obj, record))
                 for item in self.columns:
-                    # print("Item: " + item)
-                    # print("Key: " + key)
                     if obj == item:
-                        # print(structure)
-                        # print(structure[structure.index(obj)])
                         new_dict[item] = record[item]
-                        # print(structure)
 
             structure = [new_dict]
 
-            # print("After: ")
-            # print(structure)
-
         return structure
-
-    def replace_with_column_data(self, key, record):
-        for item in self.columns:
-            # print("Item: " + item)
-            # print("Key: " + key)
-            if key == item:
-                return {key: record[key]}

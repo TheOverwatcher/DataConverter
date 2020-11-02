@@ -10,6 +10,8 @@ CONFIG_FILE = "DataConverter.ini"
 
 
 def setup_log_system(config_data):
+    """
+    """
     assert config_data, "Missing parameter!"
     log_config = config_data['LOG_DATA']
     assert log_config, "Missing LOG config data!"
@@ -52,8 +54,10 @@ def setup_log_system(config_data):
 
 
 def usage_help():
+    """
+    """
     print("This script will perform a data conversion between CSV and JSON.\n")
-    print("Usage: python DataConverter.py <Filename>.csv")
+    print("Usage: python DataConverter.py")
     sys.exit(-1)
 
 
@@ -66,10 +70,9 @@ if __name__ == "__main__":
         assert False, "Error in obtaining config data!"
         sys.exit(-1)
 
-    filename = None
+    filename = config_data["CSV_DATA"]["FILENAME"]
 
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
+    if filename:
         if(filename.endswith(".csv")):
             print("Valid CSV file: " + filename)
         else:
