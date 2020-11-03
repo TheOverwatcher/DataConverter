@@ -132,8 +132,12 @@ class CSVConverter():
 
         record = {}
 
-        for col in self.columns:
-            record[col] = row[col]
+        try:
+            for col in self.columns:
+                record[col] = row[col]
+        except KeyError as kerr:
+            self.log("ERROR", "Unable to access column: " + col +
+                     ". Please check the type of CSV file is correct.")
 
         return record
 
