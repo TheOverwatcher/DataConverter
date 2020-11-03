@@ -78,7 +78,7 @@ class CSVConverter():
             combined with like JSON objects to build the objects properly.
             Lastly we write the JSON to a file named after the CSV file.
         """
-        self.log("Attempting to convert " + self.filename + " to JSON.")
+        self.log("INFO", "Attempting to convert " + self.filename + " to JSON.")
         try:
             with open(self.filename) as csvfile:
                 all_data = csv.DictReader(csvfile, delimiter=',')
@@ -105,7 +105,7 @@ class CSVConverter():
         except IOError as err:
             self.log("ERROR", "Failure opening file: " + self.filename)
 
-        self.log("Conversion complete. See " + json_filename + " for output.")
+        self.log("INFO", "Conversion complete. See " + json_filename + " for output.")
 
     def format_record(self, record):
         """ Format the record from the CSV into the structure of the JSON.
